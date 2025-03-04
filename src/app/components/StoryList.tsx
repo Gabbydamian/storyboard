@@ -7,7 +7,7 @@ interface StoryListProps {
 
 const StoryList: React.FC<StoryListProps> = ({ stories }) => {
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 pt-40">
       <ul className="flex flex-col space-y-4">
         {stories.map((story) => (
           <StoryItem key={story.id} story

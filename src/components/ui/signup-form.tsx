@@ -14,21 +14,22 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
-import Link from "next/link";
 
-export function LoginForm({
+export function SignupForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
-  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const { signUp } = useAuth();
+
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signIn(email, password);
-      toast("Login successful");
+      await signUp(email, password, displayName);
+      toast("Signup successful");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast(error.message);
@@ -43,13 +44,13 @@ export function LoginForm({
       <ToastContainer />
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-xl">Create an account</CardTitle>
           <CardDescription>
-            Enter your email and password to login
+            Provide your email and password to create an account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSignIn}>
+          <form onSubmit={handleSignUp}>
             <div className="grid gap-6">
               <div className="grid gap-6">
                 <div className="grid gap-2">
@@ -64,14 +65,19 @@ export function LoginForm({
                   />
                 </div>
                 <div className="grid gap-2">
+                  <Label htmlFor="email">Username</Label>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Username"
+                    required
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
-                      className="ml-auto text-sm underline-offset-4 hover:underline"
-                    >
-                      Forgot your password?
-                    </a>
                   </div>
                   <Input
                     id="password"
@@ -82,15 +88,10 @@ export function LoginForm({
                   />
                 </div>
                 <Button type="submit" className="w-full">
-                  Login
+                  Sign up
                 </Button>
               </div>
-              <div className="text-center text-sm">
-                Don&apos;t have an account?{" "}
-                <Link href="/signup" className="underline underline-offset-4">
-                  Sign up
-                </Link>
-              </div>
+
             </div>
           </form>
         </CardContent>

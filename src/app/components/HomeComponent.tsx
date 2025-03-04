@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from './Navbar'
 import StoryList from './StoryList'
 import { Story } from '@/types/story'
+import { PrivateRoute } from './PrivateRoute'
 
 
 interface HomeComponentProps {
@@ -10,11 +11,11 @@ interface HomeComponentProps {
 
 const HomeComponent: React.FC<HomeComponentProps> = ({stories}) => {
     return (
-        <>
+        <PrivateRoute>
             <Navbar />
             <StoryList stories = {stories || []}/>
             {/* {console.log(stories)} */}
-        </>
+        </PrivateRoute>
     )
 }
 
