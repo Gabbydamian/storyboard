@@ -15,12 +15,14 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const { signIn } = useAuth();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -29,6 +31,7 @@ export function LoginForm({
     try {
       await signIn(email, password);
       toast("Login successful");
+      router.push("/");
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast(error.message);
@@ -39,7 +42,10 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 mt-[-100px]", className)}
+      {...props}
+    >
       <ToastContainer />
       <Card>
         <CardHeader className="text-center">

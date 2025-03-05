@@ -10,31 +10,22 @@ interface StoryItemProps {
 
 const StoryItem: React.FC<StoryItemProps> = ({ story }) => {
   return (
-    <Link
-      href={`/stories/${story.slug}`}
-      className="p-4 bg-[#78484839] rounded-md shadow-md"
-    >
-      <li key={story.id} className=" flex gap-3 p-2">
+    <li key={story.id} className=" flex flex-col p-2 items-center">
+      <Link
+        href={`/${story.id}`}
+        className="p-4 outline-1 border-[#e6e6e6] rounded-md  w-52 hover:scale-[1.02] hover:bg-accent transition-all duration-300 ease-in-out hover:shadow-md"
+      >
         <Image
-          src={"https://picsum.photos/seed/50/250.webp"}
+          src={story.image_url || "https://picsum.photos/seed/250/250.webp"}
           width={250}
           height={250}
-          alt={story.slug}
-          className="self-center rounded-md w-1/6"
+          alt={story.title}
+          className="rounded-md"
         />
-        <div className="flex flex-col justify-between w-5/6">
-          <h2 className="text-xl font-bold">{story.title}</h2>
-          <p>
-            {`${story.content} Lorem ipsum dolor sit amet consectetur
-                adipisicing elit. Natus laborum pariatur fugiat iure repellendus
-                vel officiis similique et at quibusdam quidem in voluptatibus
-                mollitia corporis assumenda veniam, eaque aliquam necessitatibus
-                excepturi reiciendis? Nostrum officia natus architecto! Velit
-                laborum magnam ratione? Quisquam, quos. Quisquam, quos. Quisquam,
-                quos. Quisquam, quos. Quisquam, quos. Quisquam, quos. Quisquam,
-                quos. Quisquam, quos. Quisquam, quos. Quisquam, quos. Quisquam,`
-              .trim()
-              .slice(0, 700) + "..."}
+        <div className="flex flex-col justify-between text-center mt-3">
+          <h2 className="text-lg font-bold text-center">{story.title}</h2>
+          <p className="text-balance text-sm text-center">
+            {`${story.meta_description}`.trim().slice(0, 50) + "..."}
           </p>
           <span className="text-xs mt-3">
             Published on:{" "}
@@ -43,8 +34,8 @@ const StoryItem: React.FC<StoryItemProps> = ({ story }) => {
               : "N/A"}
           </span>
         </div>
-      </li>
-    </Link>
+      </Link>
+    </li>
   );
 };
 

@@ -42,7 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           user_metadata: { displayName: "", ...supabaseUser.user_metadata },
         };
         setUser(formattedUser);
-        console.log("supabaseUser: ", supabaseUser);
       }
       setLoading(false);
     };

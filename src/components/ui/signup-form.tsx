@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function SignupForm({
   className,
@@ -24,12 +26,15 @@ export function SignupForm({
   const [displayName, setDisplayName] = useState("");
 
   const { signUp } = useAuth();
+  const router = useRouter();
 
+  const login = () => router.push("/login");
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signUp(email, password, displayName);
       toast("Signup successful");
+      setTimeout(login, 1500);
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast(error.message);
@@ -40,7 +45,10 @@ export function SignupForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 mt-[-100px]", className)}
+      {...props}
+    >
       <ToastContainer />
       <Card>
         <CardHeader className="text-center">
@@ -70,7 +78,6 @@ export function SignupForm({
                     id="username"
                     type="text"
                     placeholder="Username"
-                    required
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
                   />
@@ -85,13 +92,19 @@ export function SignupForm({
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Password"
                   />
                 </div>
                 <Button type="submit" className="w-full">
                   Sign up
                 </Button>
               </div>
-
+              <div className="text-center text-sm">
+                Already have an account?{" "}
+                <Link href="/login" className="underline underline-offset-4">
+                  Login
+                </Link>
+              </div>
             </div>
           </form>
         </CardContent>
