@@ -10,6 +10,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useStory } from "@/context/Storycontext";
 import { Story } from "@/types/story";
+import Image from "next/image";
 
 interface EditStoryFormProps {
   story?: Story;
@@ -99,6 +100,17 @@ const EditStoryForm: React.FC<EditStoryFormProps> = ({ story }) => {
             value={storyDetails.image_url}
             onChange={handleChange}
           />
+          {storyDetails.image_url ? (
+            <div className="flex items-center justify-end">
+              <Image
+                src={storyDetails.image_url}
+                width={100}
+                height={100}
+                alt=""
+                className="rounded-2xl"
+              />
+            </div>
+          ) : null}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="author">Author</Label>

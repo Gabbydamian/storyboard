@@ -5,7 +5,8 @@ import Link from "next/link";
 import { PlusSquareIcon } from "lucide-react";
 import { useStory } from "@/context/Storycontext";
 
-const StoryList: React.FC = () => {
+
+const StoryList = () => {
   const { stories, loading } = useStory();
 
   return (
@@ -30,9 +31,9 @@ const StoryList: React.FC = () => {
         </ul>
       )}
 
-      <Button asChild className="fixed bottom-12 right-12">
+      <Button asChild className="fixed bottom-12 right-12 hover:scale-[1.01]">
         <Link href="/new">
-          <PlusSquareIcon size={24} /> Add a new story
+          <PlusSquareIcon size={24} /> Post a New Story
         </Link>
       </Button>
     </div>
