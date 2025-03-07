@@ -71,6 +71,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password,
     });
 
+    console.log(data);
+    
+
     if (error) throw new Error(error.message);
 
     await new Promise((resolve) => setTimeout(resolve, 100));
