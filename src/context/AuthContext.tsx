@@ -66,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -74,7 +74,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw new Error(error.message);
 
     await new Promise((resolve) => setTimeout(resolve, 100));
+
     router.replace("/");
+    router.refresh();
   };
 
   const signOut = async () => {
@@ -100,16 +102,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/login");
   };
 
-const resetPassword = async (email: string) => {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: process.env.NEXT_PUBLIC_SITE_URL + "/update-password",
-  });
+  const resetPassword = async (email: string) => {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: process.env.NEXT_PUBLIC_SITE_URL + "/update-password",
+    });
 
-  if (error) {
-    throw new Error(error.message);
-  }
-};
-
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
 
   return (
     <AuthContext.Provider
