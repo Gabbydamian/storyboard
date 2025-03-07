@@ -15,14 +15,12 @@ import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const { signIn } = useAuth();
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -30,13 +28,12 @@ export function LoginForm({
     e.preventDefault();
     try {
       await signIn(email, password);
-      toast("Login successful");
-      router.push("/");
+      toast.success("Login successful");
     } catch (error: unknown) {
       if (error instanceof Error) {
-        toast(error.message);
+        toast.error(error.message);
       } else {
-        toast("An unknown error occurred");
+        toast.error("An unknown error occurred");
       }
     }
   };
@@ -72,12 +69,12 @@ export function LoginForm({
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
+                    <Link
+                      href="/reset"
                       className="ml-auto text-sm underline-offset-4 hover:underline"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   </div>
                   <Input
                     id="password"
