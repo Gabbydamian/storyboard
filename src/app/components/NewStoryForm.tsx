@@ -12,6 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ToastContainer, toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { useStory } from "@/context/Storycontext";
+import Image from "next/image";
 
 const NewStoryForm = () => {
   const { user } = useAuth();
@@ -32,7 +33,7 @@ const NewStoryForm = () => {
 
   const [story, setStory] = useState(initialState);
 
-  const { title, content, author_id, meta_description } = story;
+  const { title, content, author_id, meta_description, image_url } = story;
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -86,6 +87,17 @@ const NewStoryForm = () => {
             value={story.image_url || "https://picsum.photos/200/300"}
             onChange={(e) => setStory({ ...story, image_url: e.target.value })}
           />
+          {image_url ? (
+            <div className="flex items-center justify-end">
+              <Image
+                src={image_url}
+                width={100}
+                height={100}
+                alt=""
+                className="rounded-2xl"
+              />
+            </div>
+          ) : null}
         </div>
         <div className="grid gap-2">
           <Label htmlFor="title">Author</Label>
