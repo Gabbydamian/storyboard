@@ -1,16 +1,27 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { newClient } from "@/utils/supabase/server";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useTransition,
+} from "react";
+import {
+  getStories,
+  addStory,
+  deleteStory,
+  updateStory,
+} from "@/actions/storyActions";
 import { Story } from "@/types/story";
 
 interface StoryContextType {
   stories: Story[];
   loading: boolean;
-  error: unknown | string;
+  error: string | null;
   deleteStory: (id: string) => Promise<void>;
   addStory: (story: Story) => Promise<void>;
-  updateStory: (story: Story) => Promise<void>;
+  updateStory: (story: Story, id: string) => Promise<void>;
 }
 
 const StoryContext = createContext<StoryContextType | null>(null);
@@ -18,76 +29,74 @@ const StoryContext = createContext<StoryContextType | null>(null);
 export function StoryProvider({ children }: { children: React.ReactNode }) {
   const [stories, setStories] = useState<Story[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<unknown | string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    const fetchStories = async () => {
-      const supabase = await newClient();
-      const { data, error } = await supabase.from("stories").select();
-      if (error) {
-        setError(error);
-      } else {
-        setStories(data || []);
+    async function fetchData() {
+      try {
+        const data = await getStories();
+        setStories(data);
+      } catch (err) {
+        setError("Failed to fetch stories.");
+        console.log("Error fetching data", err);
+        
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    };
-    fetchStories();
+    }
+
+    fetchData();
   }, []);
 
-  const deleteStory = async (id: string) => {
-    const supabase = await newClient();
-    const { error } = await supabase.from("stories").delete().eq("id", id);
-    if (error) {
-      console.error(error);
-      return;
-    }
-    setStories((prevStories) => prevStories.filter((story) => story.id !== id));
+  const handleDeleteStory = async (id: string) => {
+    startTransition(async () => {
+      try {
+        const updatedStories = await deleteStory(id);
+        setStories(updatedStories);
+      } catch (err) {
+        setError("Failed to delete story.");
+        console.log("Failed to delete story.", err);
+        
+      }
+    });
   };
 
-  const addStory = async (story: Story) => {
-    const supabase = await newClient();
-    const { error } = await supabase.from("stories").insert([story]);
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    const { data, error: fetchError } = await supabase.from("stories").select();
-
-    if (fetchError) {
-      console.error(fetchError);
-      return;
-    }
-
-    setStories(data || []);
+  const handleAddStory = async (story: Story) => {
+    startTransition(async () => {
+      try {
+        const updatedStories = await addStory(story);
+        setStories(updatedStories);
+      } catch (err) {
+        setError("Failed to add story.");
+        console.log("Failed to add story", err);
+        
+      }
+    });
   };
 
-  const updateStory = async (story: Story) => {
-    const supabase = await newClient();
-    const { error } = await supabase
-      .from("stories")
-      .update(story)
-      .eq("id", story.id);
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-
-    const { data, error: fetchError } = await supabase.from("stories").select();
-
-    if (fetchError) {
-      console.error(fetchError);
-      return;
-    }
-
-    setStories(data || []);
-  }
+  const handleUpdateStory = async (story: Partial<Story>, id: string) => {
+    startTransition(async () => {
+      try {
+        const updatedStories = await updateStory(story, id);
+        setStories(updatedStories);
+      } catch (err) {
+        console.log("Failed to update story", err)
+        setError("Failed to update story.");
+      }
+    });
+  };
 
   return (
     <StoryContext.Provider
-      value={{ stories, loading, error, deleteStory, addStory, updateStory }}
+      value={{
+        stories,
+        loading,
+        error,
+        deleteStory: handleDeleteStory,
+        addStory: handleAddStory,
+        updateStory: handleUpdateStory,
+      }}
     >
       {children}
     </StoryContext.Provider>

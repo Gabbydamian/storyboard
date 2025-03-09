@@ -1,9 +1,16 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabse";
 import { useRouter } from "next/navigation";
 import { User } from "@/types/user";
+import {
+  getUser,
+  // sessionListener,
+  signInUser,
+  signOutUser,
+  signUpUser,
+  resetUserPassword,
+} from "@/actions/userActions";
 
 interface AuthContextType {
   user: User | null;
@@ -27,65 +34,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data, error } = await supabase.auth.getUser();
-
-      if (error || !data?.user) {
+      try {
+        const fetchedUser = await getUser();
+        setUser(fetchedUser);
+      } catch (error) {
+        console.error("Error fetching user:", error);
         setUser(null);
-      } else {
-        const supabaseUser = data.user;
-        const formattedUser: User = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          createdAt: supabaseUser.created_at || "",
-          lastSignInAt: supabaseUser.last_sign_in_at || "",
-          role: supabaseUser.role || "user",
-          emailVerified: true,
-          user_metadata: { displayName: "", ...supabaseUser.user_metadata },
-        };
-        setUser(formattedUser);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchUser();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        if (session?.user) {
-          fetchUser();
-        } else {
-          setUser(null);
-          setLoading(false);
-        }
-      }
-    );
+    // sessionListener();
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+ 
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    console.log(data);
-    
-
-    if (error) throw new Error(error.message);
-
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
-    router.replace("/");
-    router.refresh();
+    try {
+      await signInUser(email, password);
+      const updatedUser = await getUser(); 
+      setUser(updatedUser);
+      router.replace("/");
+      router.refresh();
+    } catch (error) {
+      console.error("Sign-in error:", error);
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    router.push("/login");
+    try {
+      await signOutUser();
+      setUser(null);
+      router.push("/login");
+    } catch (error) {
+      console.error("Sign-out error:", error);
+    }
   };
 
   const signUp = async (
@@ -93,25 +79,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     displayName: string
   ) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { displayName },
-      },
-    });
-
-    if (error) throw new Error(error.message);
-    router.push("/login");
+    try {
+      await signUpUser(email, password, displayName);
+      router.push("/login");
+    } catch (error) {
+      console.error("Sign-up error:", error);
+    }
   };
 
   const resetPassword = async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: process.env.NEXT_PUBLIC_SITE_URL + "/update-password",
-    });
-
-    if (error) {
-      throw new Error(error.message);
+    try {
+      await resetUserPassword(email);
+    } catch (error) {
+      console.error("Reset password error:", error);
     }
   };
 

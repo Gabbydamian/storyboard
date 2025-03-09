@@ -13,20 +13,20 @@ const StoryItem: React.FC<StoryItemProps> = ({ story }) => {
     <li key={story.id} className=" flex flex-col p-2 items-center">
       <Link
         href={`/${story.id}`}
-        className="p-4 outline-1 border-[#e6e6e6] rounded-md  w-52 h-72 hover:scale-[1.02] hover:bg-accent transition-all duration-300 ease-in-out hover:shadow-md flex flex-col justify-between"
+        className="p-4 outline-1 border-[#e6e6e6] rounded-md  w-52 h-76 hover:scale-[1.02] hover:bg-accent transition-all duration-300 ease-in-out hover:shadow-md flex flex-col justify-between"
       >
         <Image
-          src={story.image_url || "https://picsum.photos/seed/250/250.webp"}
-          width={250}
-          height={250}
+          src={story.image_url || "https://picsum.photos/seed/200/200.webp"}
+          width={200}
+          height={200}
           alt={story.title}
           loading="lazy"
           className="rounded-md grow "
         />
         <div className="flex flex-col justify-between text-center mt-3">
-          <h2 className="text-lg font-bold text-center">{story.title}</h2>
-          <p className="text-balance text-sm text-center">
-            {`${story.meta_description}`.trim().slice(0, 45) + ".."}
+          <h2 className="text-md font-bold text-center">{story.title}</h2>
+          <p className="text-balance text-xs text-center">
+            {`${story.meta_description}`.trim().slice(0, 35) + ".."}
           </p>
           <span className="text-xs mt-3">
             Published on:{" "}

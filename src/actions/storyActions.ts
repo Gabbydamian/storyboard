@@ -21,7 +21,6 @@ export async function deleteStory(id: string) {
     throw new Error(error.message);
   }
 
-  // Fetch updated stories
   return getStories();
 }
 
