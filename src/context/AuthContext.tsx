@@ -48,19 +48,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fetchUser();
 
     // sessionListener();
-
- 
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
       await signInUser(email, password);
-      const updatedUser = await getUser(); 
+      const updatedUser = await getUser();
       setUser(updatedUser);
       router.replace("/");
       router.refresh();
     } catch (error) {
       console.error("Sign-in error:", error);
+      throw error;
     }
   };
 
@@ -71,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/login");
     } catch (error) {
       console.error("Sign-out error:", error);
+      throw error;
     }
   };
 
@@ -84,6 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.push("/login");
     } catch (error) {
       console.error("Sign-up error:", error);
+      throw error;
     }
   };
 
@@ -92,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await resetUserPassword(email);
     } catch (error) {
       console.error("Reset password error:", error);
+      throw error;
     }
   };
 
