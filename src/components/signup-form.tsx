@@ -13,7 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import { useAuth } from "@/context/AuthContext";
+// import { useAuth } from "@/context/AuthContext";
+import { signUpUser } from "@/actions/userActions";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -25,14 +26,13 @@ export function SignupForm({
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
 
-  const { signUp } = useAuth();
   const router = useRouter();
 
   const login = () => router.push("/login");
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signUp(email, password, displayName);
+      await signUpUser(email, password, displayName);
       toast("Signup successful");
       setTimeout(login, 1500);
     } catch (error: unknown) {
