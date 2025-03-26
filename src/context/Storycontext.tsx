@@ -40,7 +40,6 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         setError("Failed to fetch stories.");
         console.log("Error fetching data", err);
-        
       } finally {
         setLoading(false);
       }
@@ -57,6 +56,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         setError("Failed to delete story.");
         console.log("Failed to delete story.", err);
+        console.log(isPending);
         
       }
     });
@@ -70,7 +70,6 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         setError("Failed to add story.");
         console.log("Failed to add story", err);
-        
       }
     });
   };
@@ -81,7 +80,7 @@ export function StoryProvider({ children }: { children: React.ReactNode }) {
         const updatedStories = await updateStory(story, id);
         setStories(updatedStories);
       } catch (err) {
-        console.log("Failed to update story", err)
+        console.log("Failed to update story", err);
         setError("Failed to update story.");
       }
     });

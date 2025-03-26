@@ -52,7 +52,7 @@ const EditStoryForm: React.FC<EditStoryFormProps> = ({ story }) => {
     if (!storyDetails) return;
 
     try {
-      await updateStory(storyDetails);
+      await updateStory(storyDetails, storyDetails.id);
       toast.success("Story Updated successfully");
       router.refresh();
       router.push("/");
