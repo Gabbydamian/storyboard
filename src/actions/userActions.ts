@@ -18,7 +18,7 @@ export async function getUser() {
     lastSignInAt: supabaseUser.last_sign_in_at ?? "",
     role: supabaseUser.role ?? "user",
     emailVerified: true,
-    user_metadata: { displayName: "", ...supabaseUser.user_metadata }, 
+    user_metadata: { displayName: "", ...supabaseUser.user_metadata },
   };
 
   return formattedUser;
@@ -39,17 +39,28 @@ export async function getUser() {
 //     authListener?.subscription?.unsubscribe();
 //   };
 // }
-
-
 export async function signInUser(email: string, password: string) {
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-  if (error) throw new Error(error.message);
+    if (error) {
+      console.error("Sign-in error:", error);
+      return { error: "Invalid email or password. Please try again." };
+    }
 
-  await new Promise((resolve) => setTimeout(resolve, 100));
+    if (!data?.session) {
+      return { error: "Authentication failed. Please try again." };
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    return { success: true };
+  } catch (error) {
+    console.error("Unexpected sign-in error:", error);
+    return { error: "An unexpected error occurred during sign-in." };
+  }
 }
 
 export async function signOutUser() {
@@ -65,7 +76,7 @@ export async function signUpUser(
     email,
     password,
     options: {
-      data: { displayName }, 
+      data: { displayName },
     },
   });
 

@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const fetchedUser = await getUser();
         setUser(fetchedUser);
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.log("Error fetching user:", error);
         setUser(null);
       } finally {
         setLoading(false);
@@ -50,18 +50,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // sessionListener();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    try {
-      await signInUser(email, password);
-      const updatedUser = await getUser();
-      setUser(updatedUser);
-      router.replace("/");
-      router.refresh();
-    } catch (error) {
-      console.error("Sign-in error:", error);
-      throw error;
+const signIn = async (email: string, password: string) => {
+  try {
+    const result = await signInUser(email, password);
+
+    if ("error" in result) {
+      throw new Error(result.error);
     }
-  };
+
+    const updatedUser = await getUser();
+    setUser(updatedUser);
+    router.replace("/");
+    router.refresh();
+  } catch (error) {
+    console.error("Sign-in error:", error);
+    throw error;
+  }
+};
 
   const signOut = async () => {
     try {
